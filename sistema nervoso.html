@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sito sul sistema nervoso per l'Operatore Socio-Sanitario (OSS): scopri organi, funzioni e suddivisioni con quiz interattivi.">
+    <meta name="keywords" content="sistema nervoso, OSS, centrale, periferico, autonomo, somatico, quiz sistema nervoso">
+    <title>Il Sistema Nervoso</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: #e0e0e0;
+            overflow-x: hidden;
+            position: relative;
+            font-size: 18px;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/circuit-pattern.png');
+            opacity: 0.05;
+            z-index: -1;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+            position: relative;
+        }
+        header {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 3.5em;
+            color: #00d4ff;
+            text-shadow: 0 0 10px #00d4ff;
+            animation: glow 2s infinite alternate;
+        }
+        header p {
+            margin: 10px 0 0;
+            font-size: 1.2em;
+            color: #ecf0f1;
+        }
+        nav {
+            background: #34495e;
+            padding: 10px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        nav a {
+            color: #ecf0f1;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #3498db;
+        }
+        section {
+            background: rgba(20, 40, 60, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+            margin-bottom: 50px;
+            animation: fadeIn 1.5s ease-in;
+            border: 1px solid #00d4ff;
+        }
+        section h2 {
+            color: #00d4ff;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 0 5px #00d4ff;
+        }
+        section h3 {
+            color: #00d4ff;
+            font-size: 1.5em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        section p, section ul {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        section ul {
+            list-style-type: disc;
+            padding-left: 40px;
+        }
+        section ul ul {
+            list-style-type: circle;
+            padding-left: 30px;
+        }
+        .quiz-container {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .quiz-selector {
+            margin-bottom: 20px;
+        }
+        .quiz-selector select {
+            padding: 10px;
+            font-size: 1.2em;
+            background: rgba(30, 50, 70, 0.95);
+            color: #e0e0e0;
+            border: 1px solid #00d4ff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .quiz-timer {
+            font-size: 1.5em;
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+        .quiz-balls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .quiz-ball {
+            width: 40px;
+            height: 40px;
+            background: rgba(30, 50, 70, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            color: #e0e0e0;
+            transition: background 0.3s ease;
+        }
+        .quiz-ball.correct {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        .quiz-ball.incorrect {
+            background: #ff0000;
+            color: #000;
+            box-shadow: 0 0 10px #ff0000;
+        }
+        .quiz-question {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+        .quiz-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .quiz-option {
+            background: rgba(30, 50, 70, 0.95);
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: 1px solid #00d4ff;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 1.1em;
+        }
+        .quiz-option:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+        .quiz-feedback {
+            margin-top: 20px;
+            font-size: 1.2em;
+            display: none;
+        }
+        .correct {
+            color: #00ff00;
+        }
+        .incorrect {
+            color: #ff0000;
+        }
+        .quiz-result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .retry-button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .retry-button:hover {
+            background: #3498db;
+        }
+        footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        footer p {
+            margin: 0;
+            font-size: 1em;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #00d4ff, 0 0 10px #00d4ff; }
+            to { text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff; }
+        }
+        @media (max-width: 768px) {
+            nav a {
+                display: block;
+                margin: 10px 0;
+            }
+            section {
+                padding: 20px;
+            }
+            header h1 {
+                font-size: 2.5em;
+            }
+            header p {
+                font-size: 1em;
+            }
+            .quiz-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .quiz-ball {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Il Sistema Nervoso</h1>
+        <p>Struttura e Funzioni per l'OSS</p>
+    </header>
+
+    <nav>
+        <a href="#introduzione">Introduzione</a>
+        <a href="#organi">Organi</a>
+        <a href="#suddivisioni">Suddivisioni</a>
+        <a href="#quiz">Quiz</a>
+    </nav>
+
+    <div class="container">
+        <section id="introduzione">
+            <h2>Introduzione al Sistema Nervoso</h2>
+            <p>Il sistema nervoso è l’intero complesso degli organi e delle strutture che permettono di trasmettere segnali nervosi tra le varie parti del corpo e di coordinare i suoi movimenti e le sue funzioni volontarie e involontarie, sia fisiche che psicologiche.</p>
+        </section>
+
+        <section id="organi">
+            <h2>Organi del Sistema Nervoso</h2>
+            <ul>
+                <li><strong>Cervello:</strong> Centro di controllo principale.</li>
+                <li><strong>Midollo spinale:</strong> Struttura cilindrica nella colonna vertebrale.</li>
+                <li><strong>Organi di senso:</strong> Raccolgono informazioni dall’ambiente.</li>
+                <li><strong>Nervi:</strong> Trasmettono segnali nervosi.</li>
+            </ul>
+        </section>
+
+        <section id="suddivisioni">
+            <h2>Suddivisioni del Sistema Nervoso</h2>
+
+            <h3>Sistema Nervoso Centrale (SNC)</h3>
+            <p>Comprende il cervello e il midollo spinale, da cui si dipartono i nervi verso il corpo. Il cervello, contenuto nella scatola cranica, ha due emisferi uniti e contiene fino a 100 miliardi di neuroni e cellule gliali di supporto. Il midollo spinale scorre nella colonna vertebrale. Entrambi sono protetti da meningi (membrane) e dal liquido cerebrospinale, prodotto dal cervello, che scorre tra pia madre e aracnoide.</p>
+
+            <h3>Sistema Nervoso Periferico (SNP)</h3>
+            <p>Collega il SNC al resto dell’organismo. Si divide in:</p>
+            <ul>
+                <li><strong>Sistema Nervoso Autonomo (SNA):</strong> Controlla i muscoli lisci degli organi interni e le ghiandole, gestendo funzioni spontanee e riflesse (battito cardiaco, respiro, dilatazione pupille, produzione saliva, movimenti digestivi, vescica). Si suddivide in:
+                    <ul>
+                        <li><strong>Sistema simpatico:</strong> Origina da zona toracica e lombare del midollo spinale; attiva risposte a pericoli (aumento battito, pressione, adrenalina).</li>
+                        <li><strong>Sistema parasimpatico:</strong> Origina da regione sacrale e tronco encefalico; attivo in stato di relax (riduzione battito, dilatazione vasi).</li>
+                        <li><strong>Sistema enterico:</strong> Innerva visceri (tratto gastrointestinale, pancreas, cistifellea) per funzioni digestive.</li>
+                    </ul>
+                </li>
+                <li><strong>Sistema Nervoso Somatico:</strong> Controlla movimenti volontari e raccoglie dati dagli organi di senso. Gestisce anche movimenti involontari tramite riflessi midollari. Include fibre sensoriali (dal corpo al SNC) e motorie (dal SNC ai muscoli scheletrici).</li>
+            </ul>
+        </section>
+
+        <section id="quiz">
+            <h2>Quiz: Testa le Tue Conoscenze sul Sistema Nervoso</h2>
+            <p>Seleziona un quiz e rispondi alle 30 domande entro 30 minuti. Le palline si illumineranno man mano che procedi!</p>
+            <div class="quiz-container">
+                <div class="quiz-selector">
+                    <select id="quiz-select" onchange="selectQuiz()">
+                        <option value="0">Seleziona un Quiz</option>
+                        <option value="1">Quiz 1</option>
+                        <option value="2">Quiz 2</option>
+                        <option value="3">Quiz 3</option>
+                        <option value="4">Quiz 4</option>
+                        <option value="5">Quiz 5</option>
+                    </select>
+                </div>
+                <div class="quiz-timer" id="quiz-timer" style="display: none;">Tempo rimanente: 30:00</div>
+                <div class="quiz-balls" id="quiz-balls" style="display: none;"></div>
+                <div class="quiz-question" id="quiz-question"></div>
+                <div class="quiz-options" id="quiz-options"></div>
+                <div class="quiz-feedback" id="quiz-feedback"></div>
+                <div class="quiz-result" id="quiz-result"></div>
+                <button class="retry-button" id="retry-button" style="display: none;">Riprova</button>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2025 Il Sistema Nervoso - Tutti i diritti riservati</p>
+    </footer>
+
+    <script>
+        const allQuestions = [
+            // Quiz 1
+            [
+                { question: "Cosa trasmette il sistema nervoso?", options: ["Segnali nervosi", "Sangue", "Ossigeno", "Nutrienti"], correct: "Segnali nervosi" },
+                { question: "Quale organo è nel sistema nervoso?", options: ["Cervello", "Fegato", "Stomaco", "Reni"], correct: "Cervello" },
+                { question: "Dove si trova il midollo spinale?", options: ["Colonna vertebrale", "Scatola cranica", "Torace", "Pelvi"], correct: "Colonna vertebrale" },
+                { question: "Cosa compone il sistema nervoso centrale?", options: ["Cervello e midollo", "Nervi", "Organi di senso", "Muscoli"], correct: "Cervello e midollo" },
+                { question: "Quanti neuroni ha il cervello adulto?", options: ["100 miliardi", "10 milioni", "1 miliardo", "500 milioni"], correct: "100 miliardi" },
+                { question: "Cosa protegge il cervello?", options: ["Meningi", "Ossa", "Muscoli", "Pelle"], correct: "Meningi" },
+                { question: "Quale liquido scorre tra le meningi?", options: ["Cerebrospinale", "Sangue", "Linfa", "Saliva"], correct: "Cerebrospinale" },
+                { question: "Quale sistema collega il SNC al corpo?", options: ["Periferico", "Centrale", "Autonomo", "Somatico"], correct: "Periferico" },
+                { question: "Cosa controlla il sistema nervoso autonomo?", options: ["Muscoli lisci", "Muscoli scheletrici", "Movimenti volontari", "Sensi"], correct: "Muscoli lisci" },
+                { question: "Quale funzione è controllata dall’autonomo?", options: ["Battito cardiaco", "Camminare", "Parlare", "Vedere"], correct: "Battito cardiaco" },
+                { question: "Dove origina il sistema simpatico?", options: ["Toracica e lombare", "Sacrale", "Tronco encefalico", "Cervicale"], correct: "Toracica e lombare" },
+                { question: "Cosa aumenta il sistema simpatico?", options: ["Frequenza cardiaca", "Digestione", "Rilassamento", "Pupille ristrette"], correct: "Frequenza cardiaca" },
+                { question: "Dove origina il parasimpatico?", options: ["Sacrale e tronco", "Toracica", "Lombare", "Cervicale"], correct: "Sacrale e tronco" },
+                { question: "Cosa fa il parasimpatico?", options: ["Riduce battito", "Aumenta pressione", "Attiva adrenalina", "Dilata pupille"], correct: "Riduce battito" },
+                { question: "Quale sistema innerva i visceri?", options: ["Enterico", "Simpatico", "Parasimpatico", "Somatico"], correct: "Enterico" },
+                { question: "Cosa controlla il sistema somatico?", options: ["Movimenti volontari", "Battito cardiaco", "Digestione", "Respiro"], correct: "Movimenti volontari" },
+                { question: "Quali fibre inviano dati al SNC?", options: ["Sensoriali", "Motorie", "Autonome", "Enteriche"], correct: "Sensoriali" },
+                { question: "Quali fibre vanno ai muscoli scheletrici?", options: ["Motorie", "Sensoriali", "Autonome", "Enteriche"], correct: "Motorie" },
+                { question: "Cosa raccoglie il sistema somatico?", options: ["Dati dai sensi", "Sangue", "Linfa", "Ossigeno"], correct: "Dati dai sensi" },
+                { question: "Quale organo produce il liquido cerebrospinale?", options: ["Cervello", "Midollo", "Nervi", "Meningi"], correct: "Cervello" },
+                { question: "Quale parte ha due emisferi?", options: ["Cervello", "Midollo", "Nervi", "Organi di senso"], correct: "Cervello" },
+                { question: "Quale sistema gestisce i riflessi?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale sistema nervoso è nella scatola cranica?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale funzione è riflessa?", options: ["Respiro", "Camminare", "Parlare", "Scrivere"], correct: "Respiro" },
+                { question: "Quale sistema controlla la vescica?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Cosa innerva il sistema enterico?", options: ["Tratto gastrointestinale", "Muscoli scheletrici", "Cuore", "Polmoni"], correct: "Tratto gastrointestinale" },
+                { question: "Quale sistema nervoso ha cellule gliali?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema attiva l’adrenalina?", options: ["Simpatico", "Parasimpatico", "Enterico", "Somatico"], correct: "Simpatico" },
+                { question: "Quale sistema dilata i vasi sanguigni?", options: ["Parasimpatico", "Simpatico", "Enterico", "Somatico"], correct: "Parasimpatico" },
+                { question: "Quale organo è nel SNP?", options: ["Nervi", "Cervello", "Midollo", "Meningi"], correct: "Nervi" }
+            ],
+            // Quiz 2
+            [
+                { question: "Quale sistema coordina i movimenti?", options: ["Nervoso", "Muscolare", "Scheletrico", "Cardiovascolare"], correct: "Nervoso" },
+                { question: "Quale organo è nel SNC?", options: ["Midollo spinale", "Nervi", "Organi di senso", "Muscoli"], correct: "Midollo spinale" },
+                { question: "Dove si trova il cervello?", options: ["Scatola cranica", "Colonna vertebrale", "Torace", "Addome"], correct: "Scatola cranica" },
+                { question: "Cosa compone il SNC?", options: ["Cervello e midollo", "Nervi", "Organi di senso", "Ghiandole"], correct: "Cervello e midollo" },
+                { question: "Cosa supporta i neuroni?", options: ["Cellule gliali", "Meningi", "Liquido cerebrospinale", "Nervi"], correct: "Cellule gliali" },
+                { question: "Quale membrana è nel SNC?", options: ["Pia madre", "Pelle", "Muscoli", "Ossa"], correct: "Pia madre" },
+                { question: "Quale sistema include il liquido cerebrospinale?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema nervoso è periferico?", options: ["SNP", "SNC", "SNA", "Somatico"], correct: "SNP" },
+                { question: "Quale sistema controlla le ghiandole?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale funzione è spontanea?", options: ["Respiro", "Camminare", "Parlare", "Scrivere"], correct: "Respiro" },
+                { question: "Dove origina il simpatico?", options: ["Toracica e lombare", "Sacrale", "Cervicale", "Tronco encefalico"], correct: "Toracica e lombare" },
+                { question: "Cosa fa il simpatico in pericolo?", options: ["Aumenta pressione", "Riduce battito", "Rilassa", "Digestione"], correct: "Aumenta pressione" },
+                { question: "Dove origina il parasimpatico?", options: ["Sacrale e tronco", "Toracica", "Lombare", "Cervicale"], correct: "Sacrale e tronco" },
+                { question: "Cosa fa il parasimpatico in relax?", options: ["Dilata vasi", "Aumenta battito", "Attiva adrenalina", "Dilata pupille"], correct: "Dilata vasi" },
+                { question: "Quale sistema controlla la digestione?", options: ["Enterico", "Simpatico", "Parasimpatico", "Somatico"], correct: "Enterico" },
+                { question: "Quale sistema controlla i muscoli scheletrici?", options: ["Somatico", "Autonomo", "Centrale", "Periferico"], correct: "Somatico" },
+                { question: "Quali fibre raccolgono dati sensoriali?", options: ["Sensoriali", "Motorie", "Autonome", "Enteriche"], correct: "Sensoriali" },
+                { question: "Quali fibre controllano i movimenti volontari?", options: ["Motorie", "Sensoriali", "Autonome", "Enteriche"], correct: "Motorie" },
+                { question: "Quale sistema gestisce i riflessi midollari?", options: ["Somatico", "Autonomo", "Centrale", "Periferico"], correct: "Somatico" },
+                { question: "Quale organo è nel sistema nervoso?", options: ["Organi di senso", "Cuore", "Fegato", "Reni"], correct: "Organi di senso" },
+                { question: "Quale parte è cilindrica?", options: ["Midollo spinale", "Cervello", "Nervi", "Meningi"], correct: "Midollo spinale" },
+                { question: "Quale sistema include l’aracnoide?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema nervoso controlla la pupilla?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale sistema nervoso è nel SNP?", options: ["Autonomo", "Centrale", "Muscolare", "Scheletrico"], correct: "Autonomo" },
+                { question: "Quale sistema controlla la saliva?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale sistema innerva il pancreas?", options: ["Enterico", "Simpatico", "Parasimpatico", "Somatico"], correct: "Enterico" },
+                { question: "Quale sistema ha neuroni nel SNC?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema aumenta l’adrenalina?", options: ["Simpatico", "Parasimpatico", "Enterico", "Somatico"], correct: "Simpatico" },
+                { question: "Quale sistema riduce la pupilla?", options: ["Parasimpatico", "Simpatico", "Enterico", "Somatico"], correct: "Parasimpatico" },
+                { question: "Quale organo trasmette segnali?", options: ["Nervi", "Cervello", "Midollo", "Meningi"], correct: "Nervi" }
+            ],
+            // Quiz 3
+            [
+                { question: "Quale sistema coordina funzioni psicologiche?", options: ["Nervoso", "Muscolare", "Scheletrico", "Digerente"], correct: "Nervoso" },
+                { question: "Quale organo è nel SNP?", options: ["Nervi", "Cervello", "Midollo", "Meningi"], correct: "Nervi" },
+                { question: "Dove scorre il midollo spinale?", options: ["Colonna vertebrale", "Scatola cranica", "Torace", "Pelvi"], correct: "Colonna vertebrale" },
+                { question: "Quale sistema ha due emisferi?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Cosa compone il cervello?", options: ["Neuroni", "Muscoli", "Ossa", "Ghiandole"], correct: "Neuroni" },
+                { question: "Quale struttura protegge il SNC?", options: ["Meningi", "Pelle", "Muscoli", "Ossa"], correct: "Meningi" },
+                { question: "Quale liquido è prodotto dal cervello?", options: ["Cerebrospinale", "Sangue", "Linfa", "Saliva"], correct: "Cerebrospinale" },
+                { question: "Quale sistema nervoso è nel SNP?", options: ["Autonomo", "Centrale", "Muscolare", "Scheletrico"], correct: "Autonomo" },
+                { question: "Quale sistema controlla il respiro?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale funzione è riflessa?", options: ["Battito cardiaco", "Camminare", "Parlare", "Scrivere"], correct: "Battito cardiaco" },
+                { question: "Dove origina il sistema simpatico?", options: ["Toracica e lombare", "Sacrale", "Cervicale", "Tronco encefalico"], correct: "Toracica e lombare" },
+                { question: "Cosa fa il simpatico?", options: ["Aumenta adrenalina", "Riduce battito", "Rilassa", "Digestione"], correct: "Aumenta adrenalina" },
+                { question: "Dove origina il parasimpatico?", options: ["Sacrale e tronco", "Toracica", "Lombare", "Cervicale"], correct: "Sacrale e tronco" },
+                { question: "Cosa fa il parasimpatico?", options: ["Riduce battito", "Aumenta pressione", "Attiva adrenalina", "Dilata pupille"], correct: "Riduce battito" },
+                { question: "Quale sistema innerva la cistifellea?", options: ["Enterico", "Simpatico", "Parasimpatico", "Somatico"], correct: "Enterico" },
+                { question: "Quale sistema raccoglie dati dai sensi?", options: ["Somatico", "Autonomo", "Centrale", "Periferico"], correct: "Somatico" },
+                { question: "Quali fibre inviano segnali al SNC?", options: ["Sensoriali", "Motorie", "Autonome", "Enteriche"], correct: "Sensoriali" },
+                { question: "Quali fibre vanno ai muscoli scheletrici?", options: ["Motorie", "Sensoriali", "Autonome", "Enteriche"], correct: "Motorie" },
+                { question: "Quale sistema controlla i movimenti involontari?", options: ["Somatico", "Autonomo", "Centrale", "Periferico"], correct: "Somatico" },
+                { question: "Quale organo è nel sistema nervoso?", options: ["Organi di senso", "Fegato", "Stomaco", "Reni"], correct: "Organi di senso" },
+                { question: "Quale parte è nella scatola cranica?", options: ["Cervello", "Midollo", "Nervi", "Meningi"], correct: "Cervello" },
+                { question: "Quale sistema include la pia madre?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema controlla la digestione?", options: ["Enterico", "Somatico", "Centrale", "Periferico"], correct: "Enterico" },
+                { question: "Quale sistema nervoso controlla la pupilla?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale sistema controlla i visceri?", options: ["Enterico", "Somatico", "Centrale", "Periferico"], correct: "Enterico" },
+                { question: "Quale sistema innerva il tratto gastrointestinale?", options: ["Enterico", "Simpatico", "Parasimpatico", "Somatico"], correct: "Enterico" },
+                { question: "Quale sistema ha 100 miliardi di neuroni?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema aumenta la pressione sanguigna?", options: ["Simpatico", "Parasimpatico", "Enterico", "Somatico"], correct: "Simpatico" },
+                { question: "Quale sistema dilata i vasi?", options: ["Parasimpatico", "Simpatico", "Enterico", "Somatico"], correct: "Parasimpatico" },
+                { question: "Quale organo è nel SNC?", options: ["Midollo spinale", "Nervi", "Organi di senso", "Muscoli"], correct: "Midollo spinale" }
+            ],
+            // Quiz 4
+            [
+                { question: "Quale sistema trasmette segnali?", options: ["Nervoso", "Muscolare", "Scheletrico", "Digerente"], correct: "Nervoso" },
+                { question: "Quale organo è nel SNC?", options: ["Cervello", "Nervi", "Organi di senso", "Muscoli"], correct: "Cervello" },
+                { question: "Dove si trova il midollo spinale?", options: ["Colonna vertebrale", "Scatola cranica", "Torace", "Addome"], correct: "Colonna vertebrale" },
+                { question: "Cosa compone il sistema nervoso centrale?", options: ["Cervello e midollo", "Nervi", "Organi di senso", "Ghiandole"], correct: "Cervello e midollo" },
+                { question: "Cosa supporta i neuroni nel cervello?", options: ["Cellule gliali", "Meningi", "Liquido cerebrospinale", "Nervi"], correct: "Cellule gliali" },
+                { question: "Quale membrana protegge il SNC?", options: ["Aracnoide", "Pelle", "Muscoli", "Ossa"], correct: "Aracnoide" },
+                { question: "Quale liquido scorre tra pia madre e aracnoide?", options: ["Cerebrospinale", "Sangue", "Linfa", "Saliva"], correct: "Cerebrospinale" },
+                { question: "Quale sistema connette il SNC agli arti?", options: ["Periferico", "Centrale", "Autonomo", "Somatico"], correct: "Periferico" },
+                { question: "Quale sistema controlla i muscoli lisci?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale funzione è controllata dall’autonomo?", options: ["Dilatazione pupille", "Camminare", "Parlare", "Vedere"], correct: "Dilatazione pupille" },
+                { question: "Dove origina il sistema simpatico?", options: ["Toracica e lombare", "Sacrale", "Cervicale", "Tronco encefalico"], correct: "Toracica e lombare" },
+                { question: "Cosa fa il simpatico in emergenza?", options: ["Aumenta battito", "Riduce battito", "Rilassa", "Digestione"], correct: "Aumenta battito" },
+                { question: "Dove origina il parasimpatico?", options: ["Sacrale e tronco", "Toracica", "Lombare", "Cervicale"], correct: "Sacrale e tronco" },
+                { question: "Cosa fa il parasimpatico?", options: ["Riduce pupilla", "Aumenta pressione", "Attiva adrenalina", "Dilata vasi"], correct: "Riduce pupilla" },
+                { question: "Quale sistema innerva il pancreas?", options: ["Enterico", "Simpatico", "Parasimpatico", "Somatico"], correct: "Enterico" },
+                { question: "Quale sistema controlla i movimenti volontari?", options: ["Somatico", "Autonomo", "Centrale", "Periferico"], correct: "Somatico" },
+                { question: "Quali fibre inviano dati sensoriali?", options: ["Sensoriali", "Motorie", "Autonome", "Enteriche"], correct: "Sensoriali" },
+                { question: "Quali fibre controllano i muscoli scheletrici?", options: ["Motorie", "Sensoriali", "Autonome", "Enteriche"], correct: "Motorie" },
+                { question: "Quale sistema gestisce i riflessi midollari?", options: ["Somatico", "Autonomo", "Centrale", "Periferico"], correct: "Somatico" },
+                { question: "Quale organo raccoglie informazioni?", options: ["Organi di senso", "Cuore", "Fegato", "Reni"], correct: "Organi di senso" },
+                { question: "Quale parte ha 100 miliardi di neuroni?", options: ["Cervello", "Midollo", "Nervi", "Meningi"], correct: "Cervello" },
+                { question: "Quale sistema include le meningi?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema controlla il battito cardiaco?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale sistema nervoso innerva i visceri?", options: ["Enterico", "Somatico", "Centrale", "Periferico"], correct: "Enterico" },
+                { question: "Quale sistema controlla la produzione di muco?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale sistema innerva la cistifellea?", options: ["Enterico", "Simpatico", "Parasimpatico", "Somatico"], correct: "Enterico" },
+                { question: "Quale sistema ha cellule di supporto?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema aumenta la frequenza cardiaca?", options: ["Simpatico", "Parasimpatico", "Enterico", "Somatico"], correct: "Simpatico" },
+                { question: "Quale sistema riduce il battito cardiaco?", options: ["Parasimpatico", "Simpatico", "Enterico", "Somatico"], correct: "Parasimpatico" },
+                { question: "Quale organo è nel sistema nervoso?", options: ["Nervi", "Fegato", "Stomaco", "Reni"], correct: "Nervi" }
+            ],
+            // Quiz 5
+            [
+                { question: "Quale sistema coordina funzioni fisiche?", options: ["Nervoso", "Muscolare", "Scheletrico", "Digerente"], correct: "Nervoso" },
+                { question: "Quale organo è nel SNC?", options: ["Midollo spinale", "Nervi", "Organi di senso", "Muscoli"], correct: "Midollo spinale" },
+                { question: "Dove si trova il cervello?", options: ["Scatola cranica", "Colonna vertebrale", "Torace", "Pelvi"], correct: "Scatola cranica" },
+                { question: "Cosa compone il SNC?", options: ["Cervello e midollo", "Nervi", "Organi di senso", "Ghiandole"], correct: "Cervello e midollo" },
+                { question: "Cosa contiene il cervello?", options: ["Neuroni", "Muscoli", "Ossa", "Ghiandole"], correct: "Neuroni" },
+                { question: "Quale struttura protegge il midollo?", options: ["Meningi", "Pelle", "Muscoli", "Ossa"], correct: "Meningi" },
+                { question: "Quale liquido è nel SNC?", options: ["Cerebrospinale", "Sangue", "Linfa", "Saliva"], correct: "Cerebrospinale" },
+                { question: "Quale sistema connette il SNC ai tessuti?", options: ["Periferico", "Centrale", "Autonomo", "Somatico"], correct: "Periferico" },
+                { question: "Quale sistema controlla la vescica?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale funzione è controllata dall’autonomo?", options: ["Produzione saliva", "Camminare", "Parlare", "Vedere"], correct: "Produzione saliva" },
+                { question: "Dove origina il sistema simpatico?", options: ["Toracica e lombare", "Sacrale", "Cervicale", "Tronco encefalico"], correct: "Toracica e lombare" },
+                { question: "Cosa fa il simpatico?", options: ["Aumenta adrenalina", "Riduce battito", "Rilassa", "Digestione"], correct: "Aumenta adrenalina" },
+                { question: "Dove origina il parasimpatico?", options: ["Sacrale e tronco", "Toracica", "Lombare", "Cervicale"], correct: "Sacrale e tronco" },
+                { question: "Cosa fa il parasimpatico in relax?", options: ["Dilata vasi", "Aumenta pressione", "Attiva adrenalina", "Dilata pupille"], correct: "Dilata vasi" },
+                { question: "Quale sistema controlla il tubo digerente?", options: ["Enterico", "Simpatico", "Parasimpatico", "Somatico"], correct: "Enterico" },
+                { question: "Quale sistema controlla i muscoli scheletrici?", options: ["Somatico", "Autonomo", "Centrale", "Periferico"], correct: "Somatico" },
+                { question: "Quali fibre inviano segnali al SNC?", options: ["Sensoriali", "Motorie", "Autonome", "Enteriche"], correct: "Sensoriali" },
+                { question: "Quali fibre controllano i movimenti volontari?", options: ["Motorie", "Sensoriali", "Autonome", "Enteriche"], correct: "Motorie" },
+                { question: "Quale sistema raccoglie dati dai sensi?", options: ["Somatico", "Autonomo", "Centrale", "Periferico"], correct: "Somatico" },
+                { question: "Quale organo è nel sistema nervoso?", options: ["Organi di senso", "Cuore", "Fegato", "Reni"], correct: "Organi di senso" },
+                { question: "Quale parte è cilindrica?", options: ["Midollo spinale", "Cervello", "Nervi", "Meningi"], correct: "Midollo spinale" },
+                { question: "Quale sistema include l’aracnoide?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema controlla il battito cardiaco?", options: ["Autonomo", "Somatico", "Centrale", "Periferico"], correct: "Autonomo" },
+                { question: "Quale sistema nervoso innerva il pancreas?", options: ["Enterico", "Somatico", "Centrale", "Periferico"], correct: "Enterico" },
+                { question: "Quale sistema controlla la digestione?", options: ["Enterico", "Somatico", "Centrale", "Periferico"], correct: "Enterico" },
+                { question: "Quale sistema innerva i visceri?", options: ["Enterico", "Simpatico", "Parasimpatico", "Somatico"], correct: "Enterico" },
+                { question: "Quale sistema ha cellule gliali?", options: ["Centrale", "Periferico", "Autonomo", "Somatico"], correct: "Centrale" },
+                { question: "Quale sistema aumenta la pressione sanguigna?", options: ["Simpatico", "Parasimpatico", "Enterico", "Somatico"], correct: "Simpatico" },
+                { question: "Quale sistema riduce la pupilla?", options: ["Parasimpatico", "Simpatico", "Enterico", "Somatico"], correct: "Parasimpatico" },
+                { question: "Quale organo trasmette segnali?", options: ["Nervi", "Cervello", "Midollo", "Meningi"], correct: "Nervi" }
+            ]
+        ];
+
+        let currentQuiz = null;
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 30 * 60; // 30 minuti in secondi
+        let timerInterval;
+
+        // Genera le palline numerate
+        const ballsContainer = document.getElementById('quiz-balls');
+        for (let i = 1; i <= 30; i++) {
+            const ball = document.createElement('div');
+            ball.className = 'quiz-ball';
+            ball.id = `ball-${i}`;
+            ball.innerText = i;
+            ballsContainer.appendChild(ball);
+        }
+
+        // Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('quiz-timer').innerText = `Tempo rimanente: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endQuiz();
+                }
+            }, 1000);
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function selectQuiz() {
+            const quizSelect = document.getElementById('quiz-select');
+            const selectedQuiz = parseInt(quizSelect.value);
+            if (selectedQuiz === 0) {
+                document.getElementById('quiz-timer').style.display = 'none';
+                document.getElementById('quiz-balls').style.display = 'none';
+                document.getElementById('quiz-question').innerText = '';
+                document.getElementById('quiz-options').innerHTML = '';
+                document.getElementById('quiz-feedback').style.display = 'none';
+                document.getElementById('quiz-result').innerHTML = '';
+                document.getElementById('retry-button').style.display = 'none';
+                clearInterval(timerInterval);
+                return;
+            }
+
+            currentQuiz = selectedQuiz - 1;
+            resetQuiz();
+        }
+
+        function loadQuizQuestion() {
+            const questionElement = document.getElementById('quiz-question');
+            const optionsElement = document.getElementById('quiz-options');
+            const feedbackElement = document.getElementById('quiz-feedback');
+            const resultElement = document.getElementById('quiz-result');
+            const retryButton = document.getElementById('retry-button');
+
+            if (currentQuestionIndex >= currentQuestions.length) {
+                endQuiz();
+                return;
+            }
+
+            const currentQuestion = currentQuestions[currentQuestionIndex];
+            questionElement.innerText = `Domanda ${currentQuestionIndex + 1}: ${currentQuestion.question}`;
+            optionsElement.innerHTML = '';
+            feedbackElement.style.display = 'none';
+            resultElement.innerHTML = '';
+            retryButton.style.display = 'none';
+
+            const shuffledOptions = shuffleArray([...currentQuestion.options]);
+            shuffledOptions.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.innerText = option;
+                optionElement.addEventListener('click', () => checkAnswer(option, currentQuestion.correct));
+                optionsElement.appendChild(optionElement);
+            });
+        }
+
+        function checkAnswer(selected, correct) {
+            const feedbackElement = document.getElementById('quiz-feedback');
+            feedbackElement.style.display = 'block';
+            const currentBall = document.getElementById(`ball-${currentQuestionIndex + 1}`);
+            if (selected === correct) {
+                currentBall.classList.add('correct');
+                feedbackElement.innerText = 'Corretto! Ottimo lavoro!';
+                feedbackElement.className = 'quiz-feedback correct';
+                score++;
+            } else {
+                currentBall.classList.add('incorrect');
+                feedbackElement.innerText = `Sbagliato. La risposta corretta è: ${correct}.`;
+                feedbackElement.className = 'quiz-feedback incorrect';
+            }
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuizQuestion();
+            }, 1500);
+        }
+
+        function endQuiz() {
+            clearInterval(timerInterval);
+            const questionElement = document.getElementById('quiz-question');
+            const optionsElement = document.getElementById('quiz-options');
+            const feedbackElement = document.getElementById('quiz-feedback');
+            const resultElement = document.getElementById('quiz-result');
+            const timerElement = document.getElementById('quiz-timer');
+            const retryButton = document.getElementById('retry-button');
+
+            questionElement.innerText = 'Quiz Completato!';
+            optionsElement.innerHTML = '';
+            feedbackElement.style.display = 'none';
+            timerElement.style.display = 'none';
+            retryButton.style.display = 'block';
+
+            if (score >= 21) {
+                resultElement.innerText = `Hai superato il test! Punteggio: ${score}/30`;
+                resultElement.style.color = '#00ff00';
+            } else {
+                resultElement.innerText = `Torna a studiare! Punteggio: ${score}/30`;
+                resultElement.style.color = '#ff0000';
+            }
+        }
+
+        function resetQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            timeLeft = 30 * 60;
+            document.getElementById('quiz-timer').style.display = 'block';
+            document.getElementById('quiz-timer').innerText = 'Tempo rimanente: 30:00';
+            document.getElementById('quiz-balls').style.display = 'flex';
+            document.querySelectorAll('.quiz-ball').forEach(ball => {
+                ball.classList.remove('correct');
+                ball.classList.remove('incorrect');
+            });
+            currentQuestions = shuffleArray([...allQuestions[currentQuiz]]);
+            clearInterval(timerInterval);
+            startTimer();
+            loadQuizQuestion();
+        }
+
+        document.getElementById('retry-button').addEventListener('click', resetQuiz);
+    </script>
+</body>
+</html>
